@@ -1,7 +1,12 @@
 var pdfData
+var pdfPage
 var textmsgs = []
+var textmsgsAll = []
 var btnsmsgs = []
+var btnsmsgsAll = []
 var limit 
+var pageNo = 0
+var pageRemainder
 fetch('/get_fields', {
     method: 'POST',
     headers: {
@@ -20,8 +25,13 @@ setTimeout(function(){
     console.log(pdfData)
     const botMessage = createBotMessage(`Greetings! <br> I will help you to fill out the pdf showing on your right. <br> Answer me the questions I ask you and I will fill out the pdf for you. <br> Say "Start" to begin.`);
     chatMessages.appendChild(botMessage);
-    limit = pdfData[0]['textFields'].length
+    pdfPage = getPageData(pageNo)    
+    limit = pdfPage['textFields'].length
 }, 3000);
+
+function getPageData(pageNum){
+    return pdfData[pageNum]
+}
 // const uploadedPDF = sessionStorage.getItem('uploadedPDF');
 // if (uploadedPDF) {
 //     const formData = JSON.parse(uploadedPDF);
@@ -56,8 +66,8 @@ var startVar = 0
 // async function start(){
 //     // const botMessageStart = createBotMessage(`Starting from page 1`);
 //     // chatMessages.appendChild(botMessageStart);
-//     // console.log(pdfData[0]['textFields'][0])
-//     const botMessage = createBotMessage(`Enter ${pdfData[0]['textFields'][startVar]}`);
+//     // console.log(pdfData[1]['textFields'][0])
+//     const botMessage = createBotMessage(`Enter ${pdfData[1]['textFields'][startVar]}`);
 //     chatMessages.appendChild(botMessage);
 //     startVar = startVar + 1
 //     chatInput.value = '';
@@ -71,14 +81,47 @@ chatSendButton.addEventListener('click', (event) => {
     console.log(limit)
     const message = chatInput.value;
     if(startVar == limit + 1){
+        pageNo = pageNo + 1
+        // console.log(pageNo/2)
+        pageRemainder = pageNo/2
+        console.log(parseInt(pageRemainder))
+        pdfPage = getPageData(parseInt(pageRemainder))
+        // pdfPage = getPageData(pageNo/2)
         startVar = 0
-        limit = pdfData[0]['btns'].length
-        mode = 'btnFields'
+        if(mode == 'textFields'){
+            limit = pdfPage['btns'].length
+            mode = 'btnFields'
+            textmsgsAll.push(textmsgs)
+            console.log(textmsgsAll)
+            textmsgs = []
+            const userMessage = createUserMessage(message);
+            chatMessages.appendChild(userMessage);
+            chatInput.value = '';
+            const botMessage = createBotMessage(`Enter ${pdfPage['btns'][startVar]} (Yes/No)`);
+            chatMessages.appendChild(botMessage);
+            startVar = startVar + 1
+            chatInput.value = '';
+        }else{
+            const userMessage = createUserMessage(message);
+            chatMessages.appendChild(userMessage);
+            btnsmsgsAll.push(btnsmsgs)
+            console.log(btnsmsgsAll)
+            btnsmsgs = []
+            chatInput.value = '';
+            const botMessage = createBotMessage(`Enter ${pdfPage['textFields'][startVar]}`);
+            chatMessages.appendChild(botMessage);
+            startVar = startVar + 1
+            chatInput.value = '';
+            limit = pdfPage['textFields'].length
+            mode = 'textFields'
+        }
+        
+        
         console.log(textmsgs)
         const userMessage = createUserMessage(message);
         chatMessages.appendChild(userMessage);
         chatInput.value = '';
-        const botMessage = createBotMessage(`Enter ${pdfData[0]['btns'][startVar]}`);
+        const botMessage = createBotMessage(`Enter ${pdfPage['btns'][startVar]}`);
         chatMessages.appendChild(botMessage);
         startVar = startVar + 1
         chatInput.value = '';
@@ -100,7 +143,7 @@ chatSendButton.addEventListener('click', (event) => {
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
-            const botMessage = createBotMessage(`Enter ${pdfData[0]['textFields'][startVar]}`);
+            const botMessage = createBotMessage(`Enter ${pdfPage['textFields'][startVar]}`);
             chatMessages.appendChild(botMessage);
             startVar = startVar + 1
             chatInput.value = '';
@@ -114,8 +157,8 @@ chatSendButton.addEventListener('click', (event) => {
         chatInput.value = '';
 
         // Send user's message to the server and get bot's response
-        const botMessage = createBotMessage(`Enter ${pdfData[0]['textFields'][startVar]}`);
-        if(pdfData[0]['textFields'][startVar] == undefined){
+        const botMessage = createBotMessage(`Enter ${pdfPage['textFields'][startVar]}`);
+        if(pdfPage['textFields'][startVar] == undefined){
             const botMessage = createBotMessage(`Now Answer me in Yes or No for the following questions <br> reply "Yes" to mark Check <br>  "No" to leave blank <br> say "ok" for the acknowledgment`);
             chatMessages.appendChild(botMessage);
             startVar = startVar + 1
@@ -133,10 +176,19 @@ chatSendButton.addEventListener('click', (event) => {
         chatInput.value = '';
 
         // Send user's message to the server and get bot's response
-        const botMessage = createBotMessage(`Enter ${pdfData[0]['btns'][startVar]} (Yes/No)`);
-        if(pdfData[0]['btns'][startVar] == undefined){
-            const botMessage = createBotMessage(`End`);
-            chatMessages.appendChild(botMessage);
+        const botMessage = createBotMessage(`Enter ${pdfPage['btns'][startVar]} (Yes/No)`);
+        if(pdfPage['btns'][startVar] == undefined){
+            if(parseInt(pageNo) == 5){
+                const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf. <button id="check" class="btn btn-sm btn-primary" onclick="check()">Check</button> `);
+                chatMessages.appendChild(botMessage);
+                btnsmsgsAll.push(btnsmsgs)
+                console.log(btnsmsgsAll)
+                btnsmsgs = []
+            }
+            else{
+                const botMessage = createBotMessage(`Compelted page ${parseInt(pageRemainder+1)}`);
+                chatMessages.appendChild(botMessage);
+            }
             startVar = startVar + 1
             scrollToBottom();
             console.log(textmsgs)
@@ -160,17 +212,40 @@ chatInput.addEventListener('keydown', (event) => {
     console.log(limit)
     const message = chatInput.value;
     if(startVar == limit + 1){
-        limit = pdfData[0]['btns'].length
+        pageNo = pageNo + 1
+        pageRemainder = pageNo/2
+        console.log(parseInt(pageRemainder))
+        pdfPage = getPageData(parseInt(pageRemainder))
         startVar = 0
-        mode = 'btnFields'
+        if(mode == 'textFields'){
+            limit = pdfPage['btns'].length
+            mode = 'btnFields'
+            textmsgsAll.push(textmsgs)
+            console.log(textmsgsAll)
+            textmsgs = []
+            const userMessage = createUserMessage(message);
+            chatMessages.appendChild(userMessage);
+            chatInput.value = '';
+            const botMessage = createBotMessage(`Enter ${pdfPage['btns'][startVar]} (Yes/No)`);
+            chatMessages.appendChild(botMessage);
+            startVar = startVar + 1
+            chatInput.value = '';
+        }else{
+            const userMessage = createUserMessage(message);
+            chatMessages.appendChild(userMessage);
+            btnsmsgsAll.push(btnsmsgs)
+            console.log(btnsmsgsAll)
+            btnsmsgs = []
+            chatInput.value = '';
+            const botMessage = createBotMessage(`Enter ${pdfPage['textFields'][startVar]}`);
+            chatMessages.appendChild(botMessage);
+            startVar = startVar + 1
+            chatInput.value = '';
+            limit = pdfPage['textFields'].length
+            mode = 'textFields'
+        }
+        
         console.log(textmsgs)
-        const userMessage = createUserMessage(message);
-        chatMessages.appendChild(userMessage);
-        chatInput.value = '';
-        const botMessage = createBotMessage(`Enter ${pdfData[0]['btns'][startVar]} (Yes/No)`);
-        chatMessages.appendChild(botMessage);
-        startVar = startVar + 1
-        chatInput.value = '';
         scrollToBottom();
         return
     }
@@ -189,7 +264,7 @@ chatInput.addEventListener('keydown', (event) => {
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
-            const botMessage = createBotMessage(`Enter ${pdfData[0]['textFields'][startVar]}`);
+            const botMessage = createBotMessage(`Enter ${pdfPage['textFields'][startVar]}`);
             chatMessages.appendChild(botMessage);
             startVar = startVar + 1
             chatInput.value = '';
@@ -203,8 +278,8 @@ chatInput.addEventListener('keydown', (event) => {
         chatInput.value = '';
 
         // Send user's message to the server and get bot's response
-        const botMessage = createBotMessage(`Enter ${pdfData[0]['textFields'][startVar]}`);
-        if(pdfData[0]['textFields'][startVar] == undefined){
+        const botMessage = createBotMessage(`Enter ${pdfPage['textFields'][startVar]}`);
+        if(pdfPage['textFields'][startVar] == undefined){
             const botMessage = createBotMessage(`Now Answer me in Yes or No for the following questions <br> reply "Yes" to mark Check <br>  "No" to leave blank <br> say "ok" for the acknowledgment`);
             chatMessages.appendChild(botMessage);
             startVar = startVar + 1
@@ -220,7 +295,7 @@ chatInput.addEventListener('keydown', (event) => {
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
-            const botMessage = createBotMessage(`Enter ${pdfData[0]['btns'][startVar]} (Yes/No)`);
+            const botMessage = createBotMessage(`Enter ${pdfPage['btns'][startVar]} (Yes/No)`);
             chatMessages.appendChild(botMessage);
             scrollToBottom();
             return
@@ -231,10 +306,19 @@ chatInput.addEventListener('keydown', (event) => {
         chatInput.value = '';
 
         // Send user's message to the server and get bot's response
-        const botMessage = createBotMessage(`Enter ${pdfData[0]['btns'][startVar]} (Yes/No)`);
-        if(pdfData[0]['btns'][startVar] == undefined){
-            const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf. <button id="check" onclick="check()">Check</button> `);
-            chatMessages.appendChild(botMessage);
+        const botMessage = createBotMessage(`Enter ${pdfPage['btns'][startVar]} (Yes/No)`);
+        if(pdfPage['btns'][startVar] == undefined){
+            if(parseInt(pageNo) == 5){
+                const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf. <button id="check" class="btn btn-sm btn-primary" onclick="check()">Check</button> `);
+                chatMessages.appendChild(botMessage);
+                btnsmsgsAll.push(btnsmsgs)
+                console.log(btnsmsgsAll)
+                btnsmsgs = []
+            }
+            else{
+                const botMessage = createBotMessage(`Completed page ${parseInt(pageRemainder + 1)}`);
+                chatMessages.appendChild(botMessage);
+            }
             startVar = startVar + 1
             scrollToBottom();
             console.log(textmsgs)
@@ -252,8 +336,8 @@ chatInput.addEventListener('keydown', (event) => {
 
 function check(){
     const payload = {
-        textmsgs: textmsgs,
-        btnsmsgs: btnsmsgs
+        textmsgs: textmsgsAll,
+        btnsmsgs: btnsmsgsAll
     };
     
     // Send a POST request to the Flask API

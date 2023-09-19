@@ -7,7 +7,7 @@ import PyPDF2
 reader = PdfReader("fl100.pdf")
 writer = PdfWriter()
 # print(reader.pages)
-page = reader.pages[0]
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -73,32 +73,43 @@ def receive_lists():
     # Assuming you have sent the lists as 'textmsgs' and 'btnsmsgs' in the JSON payload
     textmsgs = data.get('textmsgs', [])
     btnsmsgs = data.get('btnsmsgs', [])
-    print(len(page["/Annots"]))
-    btnpointer = 0
-    txtpointer = 0
-    for g in range(len(page["/Annots"])):
-        annot = page["/Annots"][g].get_object()
-        if annot['/FT'] == "/Btn":
-            print(g)
-            impu_field = btnsmsgs[btnpointer]
-            # print(annot)
-            # Try different values to mark the checkbox as checked
-            if impu_field == "yes":
-                annot.update({
-                    NameObject("/V"): NameObject("/1"),  # Try "/1" or "/Yes" or "/On"
-                    NameObject("/AS"): NameObject("/1")  # Try "/1" or "/Yes" or "/On"
-                })
-                # print(annot)
-            # print(annot)
-            btnpointer += 1
-        if annot['/FT'] == "/Tx":
-            impu_field = textmsgs[txtpointer]
-            annot.update({
-                 NameObject("/V"): PyPDF2.generic.TextStringObject(impu_field),  # Try "/1" or "/Yes" or "/On"
-              })
-            txtpointer += 1
-    # Print the received lists
-    writer.add_page(page)
+    print(textmsgs)
+    print(btnsmsgs)
+    for pageNum in range(len(reader.pages)):
+        page = reader.pages[pageNum]
+        print(len(page["/Annots"]))
+        btnpointer = 0
+        txtpointer = 0
+        for g in range(len(page["/Annots"])):
+            annot = page["/Annots"][g].get_object()
+            print(txtpointer, textmsgs)
+            try:
+                if annot['/FT'] == "/Btn":
+                
+                    print(btnsmsgs[pageNum])
+                    impu_field = btnsmsgs[pageNum][btnpointer]
+                    # print(annot)
+                    # Try different values to mark the checkbox as checked
+                    if impu_field == "yes":
+                        annot.update({
+                            NameObject("/V"): NameObject("/1"),  # Try "/1" or "/Yes" or "/On"
+                            NameObject("/AS"): NameObject("/1")  # Try "/1" or "/Yes" or "/On"
+                        })
+                        # print(annot)
+                    # print(annot)
+                    btnpointer += 1
+                if annot['/FT'] == "/Tx":
+                    print(annot)
+                    print(textmsgs[pageNum])
+                    impu_field = textmsgs[pageNum][txtpointer]
+                    annot.update({
+                        NameObject("/V"): PyPDF2.generic.TextStringObject(impu_field),  # Try "/1" or "/Yes" or "/On"
+                    })
+                    txtpointer += 1
+            except Exception as e:
+                print("break",e)
+        # Print the received lists
+        writer.add_page(page)
 # Save the modified PDF to a new file
     with open("./static/filled_Pdfs/filled-out.pdf", "wb") as output_stream:
         writer.write(output_stream)
