@@ -322,19 +322,28 @@ const propertyNames = Object.keys(dataFields);
 
 chatSendButton.addEventListener('click', (event) => {
     event.preventDefault(); // Prevents the default action of the "click" event
-    event.preventDefault(); // Prevents the default action of the "click" event
+        
+    
     if(startVar == propertyNames.length){
         const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf.`);
         var chat = document.getElementsByClassName('chat-input')[0]
         chat.innerHTML = ''
         chat.innerHTML = `<button class="btn btn-lg btn-primary" id="check" style="width: 100%" onclick="check()">Check</button>`
         chatMessages.appendChild(botMessage);
-        console.log(textmsgsDict)
         scrollToBottom();
         return
     }
     const message = chatInput.value;
     if (message.trim() !== '') {
+        if(startFlag == 0 && message.toLowerCase() != "start"){
+            const userMessage = createUserMessage(message);
+            chatMessages.appendChild(userMessage);
+            chatInput.value = '';
+            const botMessage = createBotMessage(`Type "Start" to begin.`);
+            chatMessages.appendChild(botMessage);
+            scrollToBottom();
+            return
+        }
         if(message.toLowerCase() == "start"){
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
@@ -343,11 +352,11 @@ chatSendButton.addEventListener('click', (event) => {
             chatMessages.appendChild(botMessage);
             startVar = startVar + 1
             chatInput.value = '';
+            startFlag = 1
+            scrollToBottom()
             return
         }
-        console.log(message)
         textmsgsDict[propertyNames[startVar-1]] = message
-        console.log(textmsgsDict)
         const userMessage = createUserMessage(message);
         chatMessages.appendChild(userMessage);
         chatInput.value = '';
@@ -634,24 +643,31 @@ chatInput.addEventListener('keydown', (event) => {
             chat.innerHTML = ''
             chat.innerHTML = `<button class="btn btn-lg btn-primary" id="check" style="width: 100%" onclick="check()">Check</button>`
             chatMessages.appendChild(botMessage);
-            console.log(textmsgsDict)
             scrollToBottom();
             return
         }
         if (message.trim() !== '') {
+            if(startFlag == 0 && message.toLowerCase() != "start"){
+                const userMessage = createUserMessage(message);
+                chatMessages.appendChild(userMessage);
+                chatInput.value = '';
+                const botMessage = createBotMessage(`Type "Start" to begin.`);
+                chatMessages.appendChild(botMessage);
+                scrollToBottom();
+                return
+            }
             if(message.toLowerCase() == "start"){
                 const userMessage = createUserMessage(message);
                 chatMessages.appendChild(userMessage);
                 chatInput.value = '';
                 const botMessage = createBotMessage(dataFields[propertyNames[startVar]]);
                 chatMessages.appendChild(botMessage);
-                startVar = startVar + 1
                 chatInput.value = '';
+                startFlag = 1
+                scrollToBottom()
                 return
             }
             textmsgsDict[propertyNames[startVar-1]] = message
-            console.log(message)
-            console.log(textmsgsDict)
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
