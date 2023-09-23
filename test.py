@@ -72,10 +72,10 @@ textfieldsCheck1 = {
 # Page 2 starts here
 # 'Party1_ft[0]': 'PETITIONER:',
 # 'Party2_ft[0]': 'RESPONDENT:',
-'SepTypeDef_cb[0]': 'Legal separation of the marriage or domestic partnership based on (check one):',
+'SepTypeDef_cb[0]': 'Legal separation of the marriage or domestic partnership based on (check one):', #check2
 'SepTypeDef_cb[1]': 'Divorce of the marriage or domestic partnership based on (check one):',
 'SepBasis_cb[0]': 'irreconcilable differences.',
-'SepBasis_cb[1]': 'permanent legal incapacity to make decisions.',
+'SepBasis_cb[1]': 'permanent legal incapacity to make decisions.', #check2
 'Nullity_cb[0]': 'Is it a Nullity of void marriage or domestic partnership?',
 'BasedOnIncest_cb[0]': 'Nullity of void marriage or domestic partnership based on incest.',
 'BasedOnBigamy_cb[0]': 'Nullity of void marriage or domestic partnership based on bigamy.',
@@ -123,8 +123,8 @@ textfieldsCheck1 = {
 'NoSeparateProperty_cb[0]': '"There are no such assets or debts that I know of to be confirmed by the court."',
 'ConfirmSeparateProperty_cb[0]': '"Confirm as separate property the assets and debts"',
 'WhereSPListed_cb[1]': ' Confirm as separate property the assets and debts Property Declaration (form FL-160).',
-'WhereSPListed_cb[0]': 'Confirm as separate property the assets and debts Attachment 9b.',
-'WhereSPListed_cb[2]': 'Do you want to Confirm as separate property the assets and debts?',
+'WhereSPListed_cb[0]': 'Confirm as separate property the assets and debts Attachment 9b.', #check2
+'WhereSPListed_cb[2]': 'Do you want to Confirm as separate property the assets and debts?', #check3
 'SeparatePropertyList1_tf[0]': 'Enter Item',
 'ConfirmPropertyList1To_tf[0]': 'Confirm to',
 'SeparatePropertyList2_tf[0]': 'Enter Item',
@@ -140,11 +140,11 @@ textfieldsCheck1 = {
 'NoCommOrQuasiCommProperty_cb[0]': '"There are no such assets or debts that I know of to be divided by the court."',
 'PropertyListed_cb[0]': '"Determine rights to community and quasi-community assets and debts. All such assets and debts are listed "',
 'WhereCPListed_cb[1]': 'Determine rights to community and quasi-community assets and debts. All such assets and debts are listed  in Property Declaration (form FL-160).',
-'WhereCPListed_cb[0]': 'Determine rights to community and quasi-community assets and debts. All such assets and debts are listed  in Attachment 10b.',
-'WhereCPListed_cb[2]': 'Is there any other community and quasi-community support you want?',
+'WhereCPListed_cb[0]': 'Determine rights to community and quasi-community assets and debts. All such assets and debts are listed  in Attachment 10b.', #check2
+'WhereCPListed_cb[2]': 'Is there any other community and quasi-community support you want?', #check3
 'ListProperty_ft[0]': 'if yes please (specify)',
 'FeesAndCost_cb[0]': "Do you want attorney's fees and costs to be payable?",
-'AttyFeePay_cb[0]': 'Respondent ',
+'AttyFeePay_cb[0]': 'Respondent ', #check2
 'AttyFeePay_cb[1]': 'Petitioner',
 'RestoreFormerName_cb[0]': "Should the Petitioner's former name be restored?",
 'SpecifyFormerName_tf[0]': 'if yes please specify:',
@@ -284,12 +284,12 @@ textfieldsCheck3 = {
 # 'PrintPetitionerAttorneyName_tf[0]': '(TYPE OR PRINT NAME)'
 }
 
-
+# {'/AP': {'/D': {'/2': IndirectObject(242, 0, 2477488354768), '/Off': IndirectObject(225, 0, 2477488354768)}, '/N': {'/2': IndirectObject(214, 0, 2477488354768)}}, '/AS': '/1', '/DA': '/ZaDb 7.2 Tf 0 g /ZaDb 7.2 Tf 0 g ', '/F': 4, '/FT': '/Btn', '/MK': {'/CA': '6'}, '/P': IndirectObject(1, 0, 2477488354768), '/Parent': IndirectObject(443, 0, 2477488354768), '/Rect': [174.067, 660.464, 183.067, 669.464], '/StructParent': 78, '/Subtype': '/Widget', '/T': 'SepTypeDef_cb[0]', '/TU': 'Legal separation of the marriage or domestic partnership based on (check one):', '/Type': '/Annot', '/V': '/1'}
 
 textfieldsDict = {}
 btnsDict = {}
 
-reader = PdfReader("fl100.pdf")
+reader = PdfReader("output.pdf")
 writer = PdfWriter()
 # print(reader.pages)
 page = reader.pages[0]
@@ -311,31 +311,34 @@ for i in range(len(page["/Annots"])):
         annot = page["/Annots"][i].get_object()
         # print(i,annot)
         # print(annot['/FT'] == "/Btn")
-        if annot['/FT'] == "/Btn":
-            # print(annot['/T'])
-            btnsDict[str(annot['/T'])] = str(annot['/TU'])
-            # print(btnsDict)
-            impu_field = input(f'{annot["/T"]} Yes/No: ')
-            print(annot)
-            # Try different values to mark the checkbox as checked
-            if impu_field == "yes":
-                annot.update({
-                    NameObject("/V"): NameObject("/1"),  # Try "/1" or "/Yes" or "/On"
-                    NameObject("/AS"): NameObject("/1")  # Try "/1" or "/Yes" or "/On"
-                })
+        try:
+            if annot['/FT'] == "/Btn" and annot['/T'] == 'WhereSPListed_cb[2]':
                 print(annot)
-            print(annot)
-        if annot['/FT'] == "/Tx":
-            textFields.append(annot['/TU'])
-            textfieldsDict[str(annot['/T'])] = str(annot['/TU'])
-            print(textfieldsDict)
-            # impu_field = input(f'{annot["/T"]} Tell me value: ')
-            # annot.update({
-            #     NameObject("/V"): NameObject(f'/{impu_field}'),  # Try "/1" or "/Yes" or "/On"
-            #     NameObject("/AS"): NameObject(f'/{impu_field}')  # Try "/1" or "/Yes" or "/On"
-            # })
-            # print(annot)
-            
+                # btnsDict[str(annot['/T'])] = str(annot['/TU'])
+                # print(btnsDict)
+                # impu_field = input(f'{annot["/T"]} Yes/No: ')
+                # print(annot)
+                # Try different values to mark the checkbox as checked
+                if True:
+                    annot.update({
+                        NameObject("/V"): NameObject("/3"),  # Try "/1" or "/Yes" or "/On"
+                        NameObject("/AS"): NameObject("/3")  # Try "/1" or "/Yes" or "/On"
+                    })
+                #     print(annot)
+                # print(annot)
+            if annot['/FT'] == "/Tx":
+                textFields.append(annot['/TU'])
+                textfieldsDict[str(annot['/T'])] = str(annot['/TU'])
+                print(textfieldsDict)
+                # impu_field = input(f'{annot["/T"]} Tell me value: ')
+                # annot.update({
+                #     NameObject("/V"): NameObject(f'/{impu_field}'),  # Try "/1" or "/Yes" or "/On"
+                #     NameObject("/AS"): NameObject(f'/{impu_field}')  # Try "/1" or "/Yes" or "/On"
+                # })
+                # print(annot)
+        except:
+            pass
+                
         s += 1
         # print(s)
 

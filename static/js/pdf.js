@@ -88,7 +88,7 @@
 
 
 var dataFields = {
-    'BarNo_ft[0]': 'ENTER STATE BAR NUMBER:',
+    0:{'BarNo_ft[0]': 'ENTER STATE BAR NUMBER:',
     'AttyName_ft[0]': 'ENTER ATTORNEY NAME:',
     'AttyFirm_ft[0]': 'ENTER ATTORNEY FIRM NAME:',
     'AttyStreet_ft[0]': 'ENTER ATTORNEY STREET ADDRESS:',
@@ -153,11 +153,11 @@ var dataFields = {
     'Attachment4b[0]': 'continued on Attachment 4b. (Yes/No)',
     'UnbornChild_cb[0]': 'is there a child who is not yet born?  (Yes/No)',
     'PartiesSignedVoluntaryPaternityDec_cb[0]': 'Petitioner and Respondent signed a voluntary declaration of parentage or paternity. (Attach a copy if available.)  (Yes/No)',
-    
+},
     // # Page 2 starts here
     // # 'Party1_ft[0]': 'PETITIONER:',
     // # 'Party2_ft[0]': 'RESPONDENT:',
-    'SepTypeDef_cb[0]': 'Legal separation of the marriage or domestic partnership based on (check one):  (Yes/No)',
+    1:{  'SepTypeDef_cb[0]': 'Legal separation of the marriage or domestic partnership based on (check one):  (Yes/No)',
     'SepTypeDef_cb[1]': 'Divorce of the marriage or domestic partnership based on (check one):  (Yes/No)',
     'SepBasis_cb[0]': 'irreconcilable differences.  (Yes/No)',
     'SepBasis_cb[1]': 'permanent legal incapacity to make decisions.  (Yes/No)',
@@ -220,9 +220,9 @@ var dataFields = {
     'ConfirmPropertyList4To_tf[0]': 'Confirm to',
     'SeparatePropertyList4_tf[1]': 'Enter Item',
     'ConfirmPropertyList4To_tf[1]': 'Confirm to',
-    
+},
 // Pge 3
-    'NoCommOrQuasiCommProperty_cb[0]': '"There are no such assets or debts that I know of to be divided by the court."  (Yes/No)',
+  2:{  'NoCommOrQuasiCommProperty_cb[0]': '"There are no such assets or debts that I know of to be divided by the court."  (Yes/No)',
     'PropertyListed_cb[0]': '"Determine rights to community and quasi-community assets and debts. All such assets and debts are listed "  (Yes/No)',
     'WhereCPListed_cb[1]': 'Determine rights to community and quasi-community assets and debts. All such assets and debts are listed  in Property Declaration (form FL-160).  (Yes/No)',
     'WhereCPListed_cb[0]': 'Determine rights to community and quasi-community assets and debts. All such assets and debts are listed  in Attachment 10b.  (Yes/No)',
@@ -243,10 +243,15 @@ var dataFields = {
     
     
     }
+}
     
 var pdfData
 var pdfPage
-var textmsgsDict = {}
+var textmsgsDict = {
+    0:{},
+    1:{},
+    2:{},
+}
 var textmsgsDictAll = {}
 var btnsmsgsDict = {}
 var btnsmsgsDictAll = {}
@@ -318,13 +323,19 @@ var startVar = 0
 // }
 
 var startFlag = 0
-const propertyNames = Object.keys(dataFields);
-
+var messageFlag = 0
+const propertyNames1 = Object.keys(dataFields[0]);
+const propertyNames2 = Object.keys(dataFields[1]);
+const propertyNames3 = Object.keys(dataFields[2]);
+const propertyNames = propertyNames1.concat(propertyNames2,propertyNames3)
 chatSendButton.addEventListener('click', (event) => {
     event.preventDefault(); // Prevents the default action of the "click" event
-        
-    
+    const message = chatInput.value;
     if(startVar == propertyNames.length){
+        textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+        const userMessage = createUserMessage(message);
+        chatMessages.appendChild(userMessage);
+        chatInput.value = '';
         const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf.`);
         var chat = document.getElementsByClassName('chat-input')[0]
         chat.innerHTML = ''
@@ -333,7 +344,6 @@ chatSendButton.addEventListener('click', (event) => {
         scrollToBottom();
         return
     }
-    const message = chatInput.value;
     if (message.trim() !== '') {
         if(startFlag == 0 && message.toLowerCase() != "start"){
             const userMessage = createUserMessage(message);
@@ -344,30 +354,52 @@ chatSendButton.addEventListener('click', (event) => {
             scrollToBottom();
             return
         }
+        
         if(message.toLowerCase() == "start"){
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
-            const botMessage = createBotMessage(dataFields[propertyNames[startVar]]);
+            const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
             chatMessages.appendChild(botMessage);
-            startVar = startVar + 1
             chatInput.value = '';
+            startVar = startVar + 1
             startFlag = 1
             scrollToBottom()
             return
         }
-        textmsgsDict[propertyNames[startVar-1]] = message
+        console.log(Object.keys(dataFields[pageNo]).length)
+        console.log(Object.keys(textmsgsDict[pageNo]).length)
+        if(Object.keys(dataFields[pageNo]).length-1 == Object.keys(textmsgsDict[pageNo]).length){
+            textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+            messageFlag = 1
+            pageNo = pageNo + 1
+            if(pageNo == 3){
+                pageNo = 2
+            }
+            console.log(pageNo)
+            return  
+        }
+        if(messageFlag == 0){
+            textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+        }
+        // textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+        messageFlag = 0
+        console.log(textmsgsDict)
         const userMessage = createUserMessage(message);
         chatMessages.appendChild(userMessage);
         chatInput.value = '';
-        const botMessage = createBotMessage(dataFields[propertyNames[startVar]]);
+        const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
         chatMessages.appendChild(botMessage);
-        startVar = startVar + 1
+        console.log(propertyNames[startVar])
+        console.log(pageNo)
+        console.log(startVar)
         chatInput.value = '';
         scrollToBottom();
         
+        startVar = startVar + 1
         return
     }
+
    
 });
 // chatSendButton.addEventListener('click', (event) => {
@@ -637,7 +669,10 @@ chatInput.addEventListener('keydown', (event) => {
         event.preventDefault(); // Prevents the default action of the "click" event
         const message = chatInput.value;
         if(startVar == propertyNames.length){
-            textmsgsDict[propertyNames[startVar-1]] = message
+            textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+            const userMessage = createUserMessage(message);
+            chatMessages.appendChild(userMessage);
+            chatInput.value = '';
             const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf.`);
             var chat = document.getElementsByClassName('chat-input')[0]
             chat.innerHTML = ''
@@ -656,11 +691,12 @@ chatInput.addEventListener('keydown', (event) => {
                 scrollToBottom();
                 return
             }
+            
             if(message.toLowerCase() == "start"){
                 const userMessage = createUserMessage(message);
                 chatMessages.appendChild(userMessage);
                 chatInput.value = '';
-                const botMessage = createBotMessage(dataFields[propertyNames[startVar]]);
+                const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
                 chatMessages.appendChild(botMessage);
                 chatInput.value = '';
                 startVar = startVar + 1
@@ -668,16 +704,36 @@ chatInput.addEventListener('keydown', (event) => {
                 scrollToBottom()
                 return
             }
-            textmsgsDict[propertyNames[startVar-1]] = message
+            console.log(Object.keys(dataFields[pageNo]).length)
+            console.log(Object.keys(textmsgsDict[pageNo]).length)
+            if(Object.keys(dataFields[pageNo]).length-1 == Object.keys(textmsgsDict[pageNo]).length){
+                textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+                messageFlag = 1
+                pageNo = pageNo + 1
+                if(pageNo == 3){
+                    pageNo = 2
+                }
+                console.log(pageNo)
+                return  
+            }
+            if(messageFlag == 0){
+                textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+            }
+            // textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+            messageFlag = 0
+            console.log(textmsgsDict)
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
-            const botMessage = createBotMessage(dataFields[propertyNames[startVar]]);
+            const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
             chatMessages.appendChild(botMessage);
-            startVar = startVar + 1
+            console.log(propertyNames[startVar])
+            console.log(pageNo)
+            console.log(startVar)
             chatInput.value = '';
             scrollToBottom();
             
+            startVar = startVar + 1
             return
         }
     

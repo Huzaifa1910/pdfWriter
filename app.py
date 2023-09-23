@@ -11,6 +11,7 @@ writer = PdfWriter()
 app = Flask(__name__)
 
 textfieldsCheck1 = {
+    0:{
 'BarNo_ft[0]': 'ENTER STATE BAR NUMBER:',
 'AttyName_ft[0]': 'ENTER ATTORNEY NAME:',
 'AttyFirm_ft[0]': 'ENTER ATTORNEY FIRM NAME:',
@@ -76,10 +77,11 @@ textfieldsCheck1 = {
 'Attachment4b[0]': 'continued on Attachment 4b.',
 'UnbornChild_cb[0]': 'is there a child who is not yet born?',
 'PartiesSignedVoluntaryPaternityDec_cb[0]': 'Petitioner and Respondent signed a voluntary declaration of parentage or paternity. (Attach a copy if available.)',
-
+    },
 # Page 2 starts here
 # 'Party1_ft[0]': 'PETITIONER:',
 # 'Party2_ft[0]': 'RESPONDENT:',
+1:{
 'SepTypeDef_cb[0]': 'Legal separation of the marriage or domestic partnership based on (check one):',
 'SepTypeDef_cb[1]': 'Divorce of the marriage or domestic partnership based on (check one):',
 'SepBasis_cb[0]': 'irreconcilable differences.',
@@ -143,7 +145,8 @@ textfieldsCheck1 = {
 'ConfirmPropertyList4To_tf[0]': 'Confirm to',
 'SeparatePropertyList4_tf[1]': 'Enter Item',
 'ConfirmPropertyList4To_tf[1]': 'Confirm to',
-
+},
+2:{
 # page 3 starts here
 'NoCommOrQuasiCommProperty_cb[0]': '"There are no such assets or debts that I know of to be divided by the court."',
 'PropertyListed_cb[0]': '"Determine rights to community and quasi-community assets and debts. All such assets and debts are listed "',
@@ -166,7 +169,7 @@ textfieldsCheck1 = {
 
 
 }
-
+}
 
 @app.route('/')
 def upload_page():
@@ -229,24 +232,26 @@ def receive_lists():
     data = request.get_json()
 
     # Assuming you have sent the lists as 'textmsgs' and 'btnsmsgs' in the JSON payload
-    dataFields = data.get('dataFields', [])
+    dataFields = data.get('dataFields', {})
     # btnsmsgs = data.get('btnsmsgs', [])
-    print(dataFields)
-    fields = textfieldsCheck1.keys()
-    # print(btnsmsgs)
+    # print("this is data fields",dataFields)
+    # print("Something",dataFields['0']['BarNo_ft[0]'])
     for pageNum in range(len(reader.pages)):
         page = reader.pages[pageNum]
-        print(len(page["/Annots"]))
+        # print(len(page["/Annots"]))
         btnpointer = 0
+        fields = list(dataFields[str(pageNum)].keys())
         txtpointer = 0
         for g in range(len(page["/Annots"])):
             annot = page["/Annots"][g].get_object()
-            for field in fields:
+            for vals in range(len(fields)):
+                # print(fields[0])
                 try:
-                    if annot['/T'] == field and annot['/FT'] == "/Btn":
-                    
+                    if annot['/FT'] == "/Btn" and annot['/T'] == fields[vals]:
                         
-                        impu_field = dataFields[field]
+
+                        impu_field = dataFields[str(pageNum)][annot['/T']]
+                        print(impu_field) 
                         # print(annot)
                         # Try different values to mark the checkbox as checked
                         if impu_field == "yes":
@@ -254,16 +259,27 @@ def receive_lists():
                                 NameObject("/V"): NameObject("/1"),  # Try "/1" or "/Yes" or "/On"
                                 NameObject("/AS"): NameObject("/1")  # Try "/1" or "/Yes" or "/On"
                             })
+                            if(annot['/T'] ==  'SepTypeDef_cb[0]' or annot['/T'] == 'SepBasis_cb[1]' or annot['/T'] ==  'WhereSPListed_cb[0]' or annot['/T'] ==  'WhereCPListed_cb[0]' or annot['/T'] ==  'AttyFeePay_cb[0]'):
+                                annot.update({
+                                NameObject("/V"): NameObject("/2"),  # Try "/1" or "/Yes" or "/On"
+                                NameObject("/AS"): NameObject("/2")  # Try "/1" or "/Yes" or "/On"
+                                })
+                            elif(annot['/T'] == 'WhereSPListed_cb[2]' or annot['/T'] ==  'WhereCPListed_cb[2]'):
+                                annot.update({
+                                NameObject("/V"): NameObject("/3"),  # Try "/1" or "/Yes" or "/On"
+                                NameObject("/AS"): NameObject("/3")  # Try "/1" or "/Yes" or "/On"
+                                })
                             # print(annot)
                         # print(annot)
-                    if annot['/FT'] == "/Tx" and annot['/T'] == field:
-                        impu_field = dataFields[field]
+                    if annot['/FT'] == "/Tx" and annot['/T'] == fields[vals]:
+                        impu_field = dataFields[str(pageNum)][annot['/T']]
+                        print(impu_field)
                         annot.update({
                             NameObject("/V"): PyPDF2.generic.TextStringObject(impu_field),  # Try "/1" or "/Yes" or "/On"
                         })
                         txtpointer += 1
                 except Exception as e:
-                    print("break",e)
+                    pass
             # Print the received lists
         writer.add_page(page)
 # Save the modified PDF to a new file
