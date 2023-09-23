@@ -663,6 +663,7 @@ chatInput.addEventListener('keydown', (event) => {
                 const botMessage = createBotMessage(dataFields[propertyNames[startVar]]);
                 chatMessages.appendChild(botMessage);
                 chatInput.value = '';
+                startVar = startVar + 1
                 startFlag = 1
                 scrollToBottom()
                 return
