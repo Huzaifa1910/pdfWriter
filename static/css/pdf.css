@@ -9,10 +9,14 @@
     flex-direction: row-reverse;
 	height: 90vh;
 }
-
+nav{
+    background-color: #E6E6E6 !important;
+    color: #FFFFFF !important;
+    
+  }  
 .chat-box {
 	flex: 1;
-	background-color: #f1f1f1;
+	background-color: #F5F5F5;
 	height: 92vh;
 	padding: 20px;
 }
@@ -72,8 +76,8 @@
 }
 
 .user-message {
-    background-color: #4e98ca;
-    color: white;
+    background-color: #CCE0FF;
+    color: #333333;
     max-width: 70%;
     align-self: flex-end;
     padding: 8px;
@@ -82,8 +86,8 @@
 }
 
 .bot-message {
-    background-color: #77777770;
-    color: black;
+    background-color: #E6E6E6;
+    color: #333333;
     max-width: 70%;
     align-self: flex-start;
     padding: 8px;
@@ -160,3 +164,16 @@
   .chat-input input:focus {
     border-color: #0077cc !important;
   }
+
+  /* i want to write media query on 950px minimum widthso the flex direction can be changed */
+@media screen and (max-width: 950px) {
+    .container-mine {
+        flex-direction: column;
+    }
+    .chat-box {
+        height: 50vh;
+    }
+    .pdf-viewer {
+        height: 50vh;
+    }
+}
