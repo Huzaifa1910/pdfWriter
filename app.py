@@ -256,18 +256,18 @@ def receive_lists():
                         # Try different values to mark the checkbox as checked
                         if impu_field == "yes":
                             annot.update({
-                                NameObject("/V"): NameObject("/1"),  # Try "/1" or "/Yes" or "/On"
-                                NameObject("/AS"): NameObject("/1")  # Try "/1" or "/Yes" or "/On"
+                                NameObject("/V"): NameObject("/1"),  # for btn use NameObject("/V"): NameObject("/1")
+                                NameObject("/AS"): NameObject("/1")  # for btn use NameObject("/V"): NameObject("/1")
                             })
                             if(annot['/T'] ==  'SepTypeDef_cb[0]' or annot['/T'] == 'SepBasis_cb[1]' or annot['/T'] ==  'WhereSPListed_cb[0]' or annot['/T'] ==  'WhereCPListed_cb[0]' or annot['/T'] ==  'AttyFeePay_cb[0]'):
                                 annot.update({
-                                NameObject("/V"): NameObject("/2"),  # Try "/1" or "/Yes" or "/On"
-                                NameObject("/AS"): NameObject("/2")  # Try "/1" or "/Yes" or "/On"
+                                NameObject("/V"): NameObject("/2"),  # for btn use NameObject("/V"): NameObject("/1")
+                                NameObject("/AS"): NameObject("/2")  # for btn use NameObject("/V"): NameObject("/1")
                                 })
                             elif(annot['/T'] == 'WhereSPListed_cb[2]' or annot['/T'] ==  'WhereCPListed_cb[2]'):
                                 annot.update({
-                                NameObject("/V"): NameObject("/3"),  # Try "/1" or "/Yes" or "/On"
-                                NameObject("/AS"): NameObject("/3")  # Try "/1" or "/Yes" or "/On"
+                                NameObject("/V"): NameObject("/3"),  # for btn use NameObject("/V"): NameObject("/1")
+                                NameObject("/AS"): NameObject("/3")  # for btn use NameObject("/V"): NameObject("/1")
                                 })
                             # print(annot)
                         # print(annot)
@@ -275,7 +275,7 @@ def receive_lists():
                         impu_field = dataFields[str(pageNum)][annot['/T']]
                         print(impu_field)
                         annot.update({
-                            NameObject("/V"): PyPDF2.generic.TextStringObject(impu_field),  # Try "/1" or "/Yes" or "/On"
+                            NameObject("/V"): PyPDF2.generic.TextStringObject(impu_field),  # NameObject("/V"): For text field use PyPDF2.generic.TextStringObject(<value>)
                         })
                         txtpointer += 1
                 except Exception as e:

@@ -321,8 +321,8 @@ for i in range(len(page["/Annots"])):
                 # Try different values to mark the checkbox as checked
                 if True:
                     annot.update({
-                        NameObject("/V"): NameObject("/3"),  # Try "/1" or "/Yes" or "/On"
-                        NameObject("/AS"): NameObject("/3")  # Try "/1" or "/Yes" or "/On"
+                        NameObject("/V"): NameObject("/1"),  # Try "/1" or "/Yes" or "/On"
+                        NameObject("/AS"): NameObject("/1")  # Try "/1" or "/Yes" or "/On"
                     })
                 #     print(annot)
                 # print(annot)

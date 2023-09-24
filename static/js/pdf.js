@@ -128,12 +128,12 @@ var dataFields = {
     'PetitionersResidence_tf[0]': 'Petitioner lives in (specify): ',
     'CheckBox61[0]': 'Is this dissolution of marriage?  (Yes/No)',
     'DateOfMarriage_dt[0]': 'Date of marriage (specify):',
-    'DateOfSeparation_dt[0]': 'Date of separation (specify):',
-    'MonthsSeparated_tf[0]': 'Years',
-    'MonthsSeparated_tf[1]': 'Months',
+    'DateOfSeparation_dt[0]': 'Date of separation of your Marriage (specify):',
+    'MonthsSeparated_tf[0]': 'Enter Years Since you have been separated',
+    'MonthsSeparated_tf[1]': 'Enter Months if remaining after years e.g. X years Y months',
     'CheckBox61[1]': 'Is it a dissolution of domestic partnership?  (Yes/No)',
-    'DateTimeField1[0]': 'date', //#other one 3 b 
-    'DatePartnersSeparated_dt[0]': 'Date of separation (specify):',
+    'DateTimeField1[0]': 'Enter registeration date of domestic partnership with the California Secretary of State or other state equivalent (specify below):', //#other one 3 b 
+    'DatePartnersSeparated_dt[0]': 'Date of separation of your Partnership (specify):',
     'MonthsSeparated_tf[3]': 'Enter Years Since you have been separated',
     'MonthsSeparated_tf[2]': 'Enter Months if remaining after years e.g. X years Y months',
     'ThereAreNoMinorChildren_cb[0]': 'There are no minor children.  (Yes/No)',
@@ -247,13 +247,13 @@ var dataFields = {
     
 var pdfData
 var pdfPage
-var textmsgsDict = {
+var textmsgsDict = { // this is the dictionary that will be sent to the backend
     0:{},
     1:{},
     2:{},
 }
 var textmsgsDictAll = {}
-var btnsmsgsDict = {}
+var btnsmsgsDict = {} 
 var btnsmsgsDictAll = {}
 var textmsgs = []
 var textmsgsAll = []
