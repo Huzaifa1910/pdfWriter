@@ -331,75 +331,75 @@ const propertyNames = propertyNames1.concat(propertyNames2,propertyNames3)
 chatSendButton.addEventListener('click', (event) => {
     event.preventDefault(); // Prevents the default action of the "click" event
     const message = chatInput.value;
-    if(startVar == propertyNames.length){
-        textmsgsDict[pageNo][propertyNames[startVar-1]] = message
-        const userMessage = createUserMessage(message);
-        chatMessages.appendChild(userMessage);
-        chatInput.value = '';
-        const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf.`);
-        var chat = document.getElementsByClassName('chat-input')[0]
-        chat.innerHTML = ''
-        chat.innerHTML = `<button class="btn btn-lg btn-primary" id="check" style="width: 100%" onclick="check()">Check</button>`
-        chatMessages.appendChild(botMessage);
-        scrollToBottom();
-        return
-    }
-    if (message.trim() !== '') {
-        if(startFlag == 0 && message.toLowerCase() != "start"){
+        if(startVar == propertyNames.length){
+            textmsgsDict[pageNo][propertyNames[startVar-1]] = message
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
-            const botMessage = createBotMessage(`Type "Start" to begin.`);
+            const botMessage = createBotMessage(`End <br> Thank you for using our service. <br> Your pdf is ready to download. <br> Click on the check button to check the pdf.`);
+            var chat = document.getElementsByClassName('chat-input')[0]
+            chat.innerHTML = ''
+            chat.innerHTML = `<button class="btn btn-lg btn-primary" id="check" style="width: 100%" onclick="check()">Check</button>`
             chatMessages.appendChild(botMessage);
             scrollToBottom();
             return
         }
-        
-        if(message.toLowerCase() == "start"){
+        if (message.trim() !== '') {
+            if(startFlag == 0 && message.toLowerCase() != "start"){
+                const userMessage = createUserMessage(message);
+                chatMessages.appendChild(userMessage);
+                chatInput.value = '';
+                const botMessage = createBotMessage(`Type "Start" to begin.`);
+                chatMessages.appendChild(botMessage);
+                scrollToBottom();
+                return
+            }
+            
+            if(message.toLowerCase() == "start"){
+                const userMessage = createUserMessage(message);
+                chatMessages.appendChild(userMessage);
+                chatInput.value = '';
+                const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
+                chatMessages.appendChild(botMessage);
+                chatInput.value = '';
+                startVar = startVar + 1
+                startFlag = 1
+                scrollToBottom()
+                return
+            }
+            console.log(Object.keys(dataFields[pageNo]).length)
+            console.log(Object.keys(textmsgsDict[pageNo]).length)
+            if(Object.keys(dataFields[pageNo]).length-1 == Object.keys(textmsgsDict[pageNo]).length){
+                textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+                messageFlag = 1
+                pageNo = pageNo + 1
+                if(pageNo == 3){
+                    pageNo = 2
+                }
+                console.log(pageNo)
+                return  
+            }
+            if(messageFlag == 0){
+                textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+            }
+            // textmsgsDict[pageNo][propertyNames[startVar-1]] = message
+            messageFlag = 0
+            console.log(textmsgsDict)
             const userMessage = createUserMessage(message);
             chatMessages.appendChild(userMessage);
             chatInput.value = '';
             const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
             chatMessages.appendChild(botMessage);
+            console.log(propertyNames[startVar])
+            console.log(pageNo)
+            console.log(startVar)
             chatInput.value = '';
+            scrollToBottom();
+            
             startVar = startVar + 1
-            startFlag = 1
-            scrollToBottom()
             return
         }
-        console.log(Object.keys(dataFields[pageNo]).length)
-        console.log(Object.keys(textmsgsDict[pageNo]).length)
-        if(Object.keys(dataFields[pageNo]).length-1 == Object.keys(textmsgsDict[pageNo]).length){
-            textmsgsDict[pageNo][propertyNames[startVar-1]] = message
-            messageFlag = 1
-            pageNo = pageNo + 1
-            if(pageNo == 3){
-                pageNo = 2
-            }
-            console.log(pageNo)
-            return  
-        }
-        if(messageFlag == 0){
-            textmsgsDict[pageNo][propertyNames[startVar-1]] = message
-        }
-        // textmsgsDict[pageNo][propertyNames[startVar-1]] = message
-        messageFlag = 0
-        console.log(textmsgsDict)
-        const userMessage = createUserMessage(message);
-        chatMessages.appendChild(userMessage);
-        chatInput.value = '';
-        const botMessage = createBotMessage(dataFields[pageNo][propertyNames[startVar]]);
-        chatMessages.appendChild(botMessage);
-        console.log(propertyNames[startVar])
-        console.log(pageNo)
-        console.log(startVar)
-        chatInput.value = '';
-        scrollToBottom();
-        
-        startVar = startVar + 1
-        return
-    }
-
+    
    
 });
 // chatSendButton.addEventListener('click', (event) => {
