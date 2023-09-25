@@ -254,7 +254,7 @@ def receive_lists():
                         print(impu_field) 
                         # print(annot)
                         # Try different values to mark the checkbox as checked
-                        if impu_field == "yes":
+                        if impu_field == "yes" or impu_field == 'y' or impu_field == 'Y' or impu_field == 'Yes' or impu_field == 'YES' or impu_field == 'Ye' or impu_field == 'YE':
                             annot.update({
                                 NameObject("/V"): NameObject("/1"),  # for btn use NameObject("/V"): NameObject("/1")
                                 NameObject("/AS"): NameObject("/1")  # for btn use NameObject("/V"): NameObject("/1")
@@ -283,7 +283,7 @@ def receive_lists():
             # Print the received lists
         writer.add_page(page)
 # Save the modified PDF to a new file
-    with open("./static/filled_Pdfs/filled-out.pdf", "wb") as output_stream:
+    with open(f"./static/filled_Pdfs/{dataFields['0']['Email_ft[0]']}/filled-out.pdf", "wb") as output_stream:
         writer.write(output_stream)
 
     output_stream.close()    
