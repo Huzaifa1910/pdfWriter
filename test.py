@@ -125,15 +125,15 @@ textfieldsCheck1 = {
 'WhereSPListed_cb[1]': ' Confirm as separate property the assets and debts Property Declaration (form FL-160).',
 'WhereSPListed_cb[0]': 'Confirm as separate property the assets and debts Attachment 9b.', #check2
 'WhereSPListed_cb[2]': 'Do you want to Confirm as separate property the assets and debts?', #check3
-'SeparatePropertyList1_tf[0]': 'Enter Item',
+'SeparatePropertyList1_tf[0]': 'Enter Item 1',
 'ConfirmPropertyList1To_tf[0]': 'Confirm to',
-'SeparatePropertyList2_tf[0]': 'Enter Item',
+'SeparatePropertyList2_tf[0]': 'Enter Item 2',
 'ConfirmPropertyList2To_tf[0]': 'Confirm to',
-'SeparatePropertyList3_tf[0]': 'Enter Item',
+'SeparatePropertyList3_tf[0]': 'Enter Item 3',
 'ConfirmPropertyList3To_tf[0]': 'Confirm to',
-'SeparatePropertyList4_tf[0]': 'Enter Item',
+'SeparatePropertyList4_tf[0]': 'Enter Item 4',
 'ConfirmPropertyList4To_tf[0]': 'Confirm to',
-'SeparatePropertyList4_tf[1]': 'Enter Item',
+'SeparatePropertyList4_tf[1]': 'Enter Item 5',
 'ConfirmPropertyList4To_tf[1]': 'Confirm to',
 
 # page 3 starts here
@@ -312,7 +312,7 @@ for i in range(len(page["/Annots"])):
         # print(i,annot)
         # print(annot['/FT'] == "/Btn")
         try:
-            if annot['/FT'] == "/Btn" and annot['/T'] == 'WhereSPListed_cb[2]':
+            if annot['/FT'] == "/Btn" and (annot['/T'] == 'DissolutionOf_cb[0]' or annot['/T'] == 'Marriage_cb[0]'):
                 print(annot)
                 # btnsDict[str(annot['/T'])] = str(annot['/TU'])
                 # print(btnsDict)
