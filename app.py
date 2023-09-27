@@ -82,6 +82,8 @@ textfieldsCheck1 = {
 # 'Party1_ft[0]': 'PETITIONER:',
 # 'Party2_ft[0]': 'RESPONDENT:',
 1:{
+'Party1_ft[0]': 'ENTER PETITIONER:',
+'Party2_ft[0]': 'ENTER RESPONDENT:', 
 'SepTypeDef_cb[0]': 'Legal separation of the marriage or domestic partnership based on (check one):',
 'SepTypeDef_cb[1]': 'Divorce of the marriage or domestic partnership based on (check one):',
 'SepBasis_cb[0]': 'irreconcilable differences.',
@@ -148,6 +150,8 @@ textfieldsCheck1 = {
 },
 2:{
 # page 3 starts here
+'Party1_ft[0]': 'ENTER PETITIONER:',
+'Party2_ft[0]': 'ENTER RESPONDENT:', 
 'NoCommOrQuasiCommProperty_cb[0]': '"There are no such assets or debts that I know of to be divided by the court."',
 'PropertyListed_cb[0]': '"Determine rights to community and quasi-community assets and debts. All such assets and debts are listed "',
 'WhereCPListed_cb[1]': 'Determine rights to community and quasi-community assets and debts. All such assets and debts are listed  in Property Declaration (form FL-160).',
@@ -254,7 +258,7 @@ def receive_lists():
                         print(impu_field) 
                         # print(annot)
                         # Try different values to mark the checkbox as checked
-                        if impu_field == "yes" or impu_field == 'y' or impu_field == 'Y' or impu_field == 'Yes' or impu_field == 'YES':
+                        if impu_field == "yes":
                             annot.update({
                                 NameObject("/V"): NameObject("/1"),  # for btn use NameObject("/V"): NameObject("/1")
                                 NameObject("/AS"): NameObject("/1")  # for btn use NameObject("/V"): NameObject("/1")
@@ -283,7 +287,9 @@ def receive_lists():
             # Print the received lists
         writer.add_page(page)
 # Save the modified PDF to a new file
-    with open(f"./static/filled_Pdfs/{dataFields['0']['Email_ft[0]']}/filled-out.pdf", "wb") as output_stream:
+    # if not os.path.exists(f"./static/filled_Pdfs/{dataFields['0']['Email_ft[0]']}"):
+    #     os.makedirs(f"./static/filled_Pdfs/{dataFields['0']['Email_ft[0]']}/")
+    with open(f"./static/filled_Pdfs/filled-out.pdf", "wb") as output_stream:
         writer.write(output_stream)
 
     output_stream.close()    
