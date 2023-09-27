@@ -254,7 +254,7 @@ def receive_lists():
                         print(impu_field) 
                         # print(annot)
                         # Try different values to mark the checkbox as checked
-                        if impu_field == "yes" or impu_field == 'y' or impu_field == 'Y' or impu_field == 'Yes' or impu_field == 'YES' or impu_field == 'Ye' or impu_field == 'YE':
+                        if impu_field == "yes" or impu_field == 'y' or impu_field == 'Y' or impu_field == 'Yes' or impu_field == 'YES':
                             annot.update({
                                 NameObject("/V"): NameObject("/1"),  # for btn use NameObject("/V"): NameObject("/1")
                                 NameObject("/AS"): NameObject("/1")  # for btn use NameObject("/V"): NameObject("/1")
